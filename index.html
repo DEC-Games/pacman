@@ -21,6 +21,21 @@
 		</div>
 		<script src="./static/script/game.js"></script>
 		<script src="./static/script/index.js"></script>
+		<script>
+			// --- Add this block at the top ---
+			const urlParams = new URLSearchParams(window.location.search);
+			const name = urlParams.get('name');
+			const email = urlParams.get('email');
+
+			// If the parameters exist in the URL, store them
+			if (name) {
+			localStorage.setItem('userName', name);
+			}
+			if (email) {
+			localStorage.setItem('userEmail', email);
+			}
+			// --- End of new block ---
+		</script>
 		<!-- <script async defer src="https://buttons.github.io/buttons.js"></script> -->
 		<!-- <script type="text/javascript" src="https://passer-by.com/public/script/projects.js"></script> -->
 		<!-- <script type="text/javascript" src="https://passer-by.com/public/script/stat.js"></script> -->

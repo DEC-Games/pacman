@@ -590,7 +590,7 @@
 				context.fillText(text,this.x,this.y);
 			}
 		}).bind('click',function(){
-			window.open('https://passer-by.com');
+			// window.open('https://passer-by.com');
 		});
 		//事件绑定
 		stage.bind('keydown',function(e){
@@ -1056,8 +1056,13 @@
 				context.textAlign = 'center';
 				context.textBaseline = 'middle';
 				context.fillText('FINAL SCORE: '+(_SCORE+50*Math.max(_LIFE-1,0)),this.x,this.y);
+				submitScore(_SCORE+50*Math.max(_LIFE-1,0))
 			}
 		});
+
+		//
+		// submitScore(_SCORE+50*Math.max(_LIFE-1,0))
+		//
 		//事件绑定
 		stage.bind('keydown',function(e){
 			switch(e.keyCode){
@@ -1065,6 +1070,7 @@
 				case 32: //空格
 				_SCORE = 0;
 				_LIFE = 5;
+				askedSubmission = false;
 				game.setStage(1);
 				break;
 			}
@@ -1077,3 +1083,46 @@
 		game.init();
 	});
 })();
+
+var askedSubmission = false;	
+
+function submitScore(scoreValue) {
+		if (!askedSubmission) {
+			askedSubmission = true;
+			// Retrieve player info from storage
+			const savedName = localStorage.getItem('userName') || 'Anonymous';
+			const savedEmail = localStorage.getItem('userEmail') || 'No Email';
+			const bestScore = Math.max(
+				scoreValue,
+				localStorage.getItem("best")
+			);
+			localStorage.setItem("best", bestScore);
+
+			// Use a confirm dialog to ask the player
+			const wantsToSubmit = confirm(
+				`Game Over!\n\nFinal Score: ${scoreValue}\n\nDo you want to submit your score?`
+			);
+
+			if (wantsToSubmit) {
+				const scoreData = {
+				name: savedName,
+				email: savedEmail,
+				score: scoreValue,
+				bestScore: bestScore,
+				game: 'Pac-Man'
+				};
+				
+				console.log("Submitting score:", scoreData);
+
+				// Send the data to your backend server using fetch
+				fetch('https://submitpacmanform-gksuylu43a-uc.a.run.app', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(scoreData),
+				})
+				.then(response => response.json())
+				.then(data => alert("Score submitted successfully!"))
+				.catch(error => alert("Could not submit score."));
+			}
+		}
+}
